@@ -7,7 +7,6 @@ import React, { useEffect } from 'react'
 const Header = () => {
   const path = usePathname();
   useEffect(() => {
-    console.log("Path Name -->", path)
   }, [])
   return (
     <div className='flex p-4 items-center justify-between bg-secondary shadow-sm'>
