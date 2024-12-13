@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input"
 import { CANCEL, START_INTERVIEW, TELL_US_ABOUT_YOURSELF } from '@/utils/constants';
@@ -14,19 +14,34 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Textarea } from '@/components/ui/textarea';
+import geminiAI from '@/utils/geminiAI';
+import { LucideAlertCircle, LucideAmbulance, LucideAtom, LucideBrain, LucideCircle, LucideCircleArrowRight, LucideCircleFadingArrowUp, LucidePercentCircle, LucideWorm, LucideXCircle } from 'lucide-react';
 
   
 
 const AddNewInterview = () => {
+
     const [openDialog, setOpenDialog] = useState(false);
     const [jobRole, setJobRole] = useState(null);
     const [jobDescription, setJobDescription] = useState(null);
     const [yearsOfExperience, setYearsOfExperience] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    // useEffect(() => {
+    //   geminiAI();
+    // }, [])
   
   
-    const onSubmit =  (e) => {
+    const onSubmit = async (e) => {
+      setLoading(true);
 
       e.preventDefault();
+      const prompt = `Job Position: ${jobRole}, Job Description: ${jobDescription}, Years of experience ${yearsOfExperience}. Depends on this information please give me 5 Interview Question with Answer in Json Format, Give Question and answer as field in JSON`;
+      const interviewResp = await geminiAI(prompt);
+      setLoading(false);
+      // if(interviewResp){
+        
+      // }
       console.log("Job Role: ", jobRole);
       console.log("Job Description: ", jobDescription);
       console.log("Years of Experience: ", yearsOfExperience);
@@ -69,10 +84,14 @@ const AddNewInterview = () => {
                   </div>
 
                   </div>
-                  <div className='flex gap-5 justify-end'>
-                    <Button type="button" onClick={() => setOpenDialog(false )} variant="ghost">{CANCEL}</Button>
-                    <Button
-                     type="submit">{START_INTERVIEW}</Button>
+                  <div className='flex py-2 gap-5 justify-end'>
+                        <Button type="button" onClick={() => setOpenDialog(false )} variant="ghost">{CANCEL}</Button>
+                        <Button
+                        type="submit" disabled={loading} 
+                        >{loading ? 
+                        <>
+                        <LucideAtom className='animate-spin' />Generating Interview Questions</>
+                        : START_INTERVIEW}</Button>
                   </div>
               </form>
 
